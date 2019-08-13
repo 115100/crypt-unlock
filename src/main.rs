@@ -38,7 +38,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
         .read(true)
         .open("/dev/console")?;
 
-    for i in 0..passphrase.to_bytes().len() {
+    for i in 0..passphrase.as_bytes().len() {
         unsafe {
             tiocsti(console.as_raw_fd(), passphrase.as_ptr().offset(i as isize))?;
         }
