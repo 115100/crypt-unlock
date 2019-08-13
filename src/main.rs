@@ -5,7 +5,7 @@ use std::ffi;
 use std::fs;
 use std::io;
 use std::io::Write;
-use std::os::unix::{io::AsRawFd};
+use std::os::unix::io::AsRawFd;
 use std::ptr::write_volatile;
 use std::string;
 
