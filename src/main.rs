@@ -2,7 +2,7 @@ extern crate libc;
 extern crate nix;
 
 use std::ffi;
-use std::fs;
+use std::fs::File;
 use std::io;
 use std::io::Write;
 use std::os::unix::io::AsRawFd;
@@ -19,9 +19,7 @@ nix::ioctl_write_ptr_bad!(tiocsti, libc::TIOCSTI, libc::c_char);
 fn main() -> Result<(), Box<std::error::Error>> {
     // Adopted from the description in:
     // http://man7.org/linux/man-pages/man3/getpass.3.html.
-    let tty = fs::OpenOptions::new()
-        .read(true)
-        .open("/dev/tty")?;
+    let tty = File::open("/dev/tty")?;
     let oflags = nix::sys::termios::tcgetattr(tty.as_raw_fd())?;
     let mut nflags = oflags.clone();
     nflags.local_flags &= !nix::sys::termios::LocalFlags::ECHO;
@@ -40,10 +38,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
     nix::sys::termios::tcsetattr(tty.as_raw_fd(), nix::sys::termios::SetArg::TCSANOW, &oflags)?;
 
     // Now, write passphrase into /dev/console.
-    let console = fs::OpenOptions::new()
-        .read(true)
-        .open("/dev/console")?;
-
+    let console = File::open("/dev/console")?;
     for i in 0..passphrase.as_bytes().len() {
         unsafe {
             tiocsti(console.as_raw_fd(), passphrase.as_ptr().offset(i as isize))?;
