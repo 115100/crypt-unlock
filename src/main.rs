@@ -9,6 +9,11 @@ use std::os::unix::{io::AsRawFd};
 use std::ptr::write_volatile;
 use std::string;
 
+// MAX_PASSPHRASE_LEN is required to preallocate
+// String such that it will never be copied.
+// https://github.com/zfsonlinux/zfs/blob/master/lib/libzfs/libzfs_crypto.c#L60.
+const MAX_PASSPHRASE_LEN: usize = 512; // Does *not* include null-terminator.
+
 nix::ioctl_write_ptr_bad!(tiocsti, libc::TIOCSTI, libc::c_char);
 
 fn main() -> Result<(), Box<std::error::Error>> {
@@ -26,7 +31,8 @@ fn main() -> Result<(), Box<std::error::Error>> {
     // Get the passphrase
     print!("Enter your passphrase: ");
     io::stdout().flush()?;
-    let mut passphrase = string::String::new();
+    // Avoid reallocations so we can zero out reliably.
+    let mut passphrase = string::String::with_capacity(MAX_PASSPHRASE_LEN + 1);
     io::stdin().read_line(&mut passphrase)?;
     let passphrase = ffi::CString::new(passphrase)?;
 
