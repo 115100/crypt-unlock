@@ -38,10 +38,12 @@ fn main() -> Result<(), Box<std::error::Error>> {
     nix::sys::termios::tcsetattr(tty.as_raw_fd(), nix::sys::termios::SetArg::TCSANOW, &oflags)?;
 
     // Now, write passphrase into /dev/console.
-    let console = File::open("/dev/console")?;
-    for i in 0..passphrase.as_bytes().len() {
-        unsafe {
-            tiocsti(console.as_raw_fd(), passphrase.as_ptr().offset(i as isize))?;
+    {
+        let console = File::open("/dev/console")?;
+        for i in 0..passphrase.as_bytes().len() {
+            unsafe {
+                tiocsti(console.as_raw_fd(), passphrase.as_ptr().offset(i as isize))?;
+            }
         }
     }
 
