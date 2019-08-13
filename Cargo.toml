@@ -7,3 +7,7 @@ edition = "2018"
 [dependencies]
 libc = "0.2.61"
 nix = "0.15.0"
+
+[profile.release]
+lto = true
+panic = 'abort'
