@@ -1,0 +1,5 @@
+AcceptEnv             LANG LC_*
+AuthenticationMethods publickey
+AuthorizedKeysFile    .ssh/authorized_keys
+ForceCommand          /usr/sbin/crypt-unlock
+Port                  2222
