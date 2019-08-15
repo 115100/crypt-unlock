@@ -22,8 +22,7 @@ pub fn getpass(prompt: &str) -> Result<String, Box<std::error::Error>> {
     let tty = File::open("/dev/tty")?;
     let old_term = termios::tcgetattr(tty.as_raw_fd())?;
     let mut new_term = old_term.clone();
-    new_term.local_flags &= !(termios::LocalFlags::ECHO | termios::LocalFlags::ISIG);
-    new_term.local_flags |= termios::LocalFlags::ECHONL;
+    new_term.local_flags &= !termios::LocalFlags::ECHO;
     termios::tcsetattr(tty.as_raw_fd(), termios::SetArg::TCSAFLUSH, &new_term)?;
 
     print!("{}", prompt);
