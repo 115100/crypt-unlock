@@ -8,7 +8,7 @@ check() {
 }
 
 depends() {
-	echo network zfs
+	echo network
 	return 0
 }
 
