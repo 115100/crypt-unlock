@@ -1,20 +1,22 @@
 extern crate libc;
 extern crate nix;
 
-mod getpass;
+mod utils;
 
-use getpass::getpass;
 use std::ffi::CString;
 use std::fs::File;
 use std::os::unix::io::AsRawFd;
 use std::ptr::write_volatile;
+use utils::{dump_console, getpass, poll_passphrase_ready};
 
 nix::ioctl_write_ptr_bad!(tiocsti, libc::TIOCSTI, libc::c_char);
 
 fn main() -> Result<(), Box<std::error::Error>> {
-    let passphrase = CString::new(getpass()?)?;
+    poll_passphrase_ready()?;
+    dump_console()?;
 
     // Write passphrase + newline into /dev/console.
+    let passphrase = CString::new(getpass("")?)?;
     {
         let console = File::open("/dev/console")?;
         for i in 0..passphrase.as_bytes().len() {
@@ -36,6 +38,9 @@ fn main() -> Result<(), Box<std::error::Error>> {
             write_volatile(&mut elem, 0);
         }
     }
+
+    // TODO: Give indication passphrase succeeded/failed
+    // or continually retry until Dracut kills sshd.
 
     Ok(())
 }
