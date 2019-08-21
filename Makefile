@@ -2,6 +2,11 @@ PREFIX = $(DESTDIR)/usr/lib/dracut/modules.d/60ssh-unlock
 DRACUT_SCRIPTS = $(wildcard dracut/60ssh-unlock/*.sh)
 DRACUT_DATA_FILES = dracut/60ssh-unlock/sshd_config
 
+target/release/crypt-unlock: $(wildcard src/*.rs)
+	cargo build --release
+
+default: target/release/crypt-unlock
+
 install: target/release/crypt-unlock $(DRACUT_SCRIPTS) $(DRACUT_DATA_FILES)
 	mkdir -p $(PREFIX)
 	install -m 0755 $< $(PREFIX)
