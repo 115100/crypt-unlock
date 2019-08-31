@@ -3,7 +3,7 @@
 check() {
 	# Dropbear could be an option but I need ed25519 support.
 	require_binaries sshd || return 1
-	[ -x $moddir/crypt-unlock ] || return 1
+	[ -x $moddir/ssh-unlock ] || return 1
 	return 0
 }
 
@@ -38,5 +38,5 @@ install() {
 	# pkill is required for sshd to be killed before pivoting
 	dracut_install /usr/bin/pkill
 
-	inst "$moddir/crypt-unlock" /usr/sbin/crypt-unlock
+	inst "$moddir/ssh-unlock" /usr/sbin/ssh-unlock
 }
