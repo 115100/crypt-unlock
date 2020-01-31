@@ -11,7 +11,7 @@ use utils::{dump_console, getpass, poll_passphrase_ready};
 
 nix::ioctl_write_ptr_bad!(tiocsti, libc::TIOCSTI, libc::c_char);
 
-fn main() -> Result<(), Box<std::error::Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     poll_passphrase_ready()?;
     dump_console()?;
 

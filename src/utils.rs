@@ -13,7 +13,7 @@ use std::time::Duration;
 // https://github.com/zfsonlinux/zfs/blob/master/lib/libzfs/libzfs_crypto.c#L60.
 const MAX_PASSPHRASE_LEN: usize = 512; // Does *not* include null-terminator.
 
-pub fn getpass(prompt: &str) -> Result<String, Box<std::error::Error>> {
+pub fn getpass(prompt: &str) -> Result<String, Box<dyn std::error::Error>> {
     // Avoid reallocations so we can zero out reliably.
     let mut s = String::with_capacity(MAX_PASSPHRASE_LEN + 1);
 
@@ -51,7 +51,7 @@ impl fmt::Display for PollPassphraseTimeoutError {
 
 impl std::error::Error for PollPassphraseTimeoutError {}
 
-pub fn poll_passphrase_ready() -> Result<(), Box<std::error::Error>> {
+pub fn poll_passphrase_ready() -> Result<(), Box<dyn std::error::Error>> {
     let mut buf = String::new();
     for i in 0..50 {
         let mut vcs = File::open("/dev/vcs1")?;
@@ -70,7 +70,7 @@ pub fn poll_passphrase_ready() -> Result<(), Box<std::error::Error>> {
 
 // -----------------------------------------------------------------------------
 
-pub fn dump_console() -> Result<(), Box<std::error::Error>> {
+pub fn dump_console() -> Result<(), Box<dyn std::error::Error>> {
     // Emulate setterm -dump 1 -file /dev/stdout.
     // vcsa is described in http://man7.org/linux/man-pages/man4/vcs.4.html.
     let vcs = File::open("/dev/vcsa1")?;
